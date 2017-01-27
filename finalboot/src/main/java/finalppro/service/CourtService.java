@@ -28,6 +28,16 @@ public class CourtService {
 		return courts;
 	}
 	
+	public List<Court> findAllActive(){
+		List<Court> courts = new ArrayList<>();
+		for(Court court : courtRepository.findAll()){
+			if (court.isActive()){
+				courts.add(court);
+			} 
+		}
+		return courts;
+	}
+	
 	public Court findCourt(int id){
 		return courtRepository.findOne(id);
 	}
