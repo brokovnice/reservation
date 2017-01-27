@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity(name="reservation")
 public class Reservation implements Serializable{
@@ -18,6 +19,7 @@ public class Reservation implements Serializable{
 	private int id;
 	private Date date_start, date_end;
 	private String note;
+	@OneToOne
 	private Court court;
 	
 	public Reservation(){

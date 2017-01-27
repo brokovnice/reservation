@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity(name="court")
 public class Court implements Serializable{
@@ -17,6 +18,7 @@ public class Court implements Serializable{
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	private String name;
+	@OneToOne
 	private Address address;
 	private boolean active;
 	

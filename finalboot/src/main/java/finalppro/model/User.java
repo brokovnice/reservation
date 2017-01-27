@@ -13,6 +13,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 @Entity(name="user")
 public class User implements Serializable{
@@ -21,10 +22,12 @@ public class User implements Serializable{
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	private String name, surname, nickname, password, email;
+	@OneToOne
 	private Address address;
+	@OneToOne
 	private Role role;
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "user_reservation", joinColumns = @JoinColumn(name = "user"), inverseJoinColumns = @JoinColumn(name = "reservation"))
+	@JoinTable(name = "user_reservation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "reservation_id"))
 	private Collection<Reservation> reservations;
 	
 	public User(){
