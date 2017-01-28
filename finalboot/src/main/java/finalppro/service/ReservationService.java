@@ -29,10 +29,10 @@ public class ReservationService {
 		return reservations;
 	}
 	
-	public List<Reservation> findAll(Date dateStart, Date dateEnd){
+	public List<Reservation> findAll(Date dateStart, Date dateEnd, int courtId){
 		List<Reservation> wantedReservations = new ArrayList<>();
 		for (Reservation reservation : reservationRepository.findAll()) {
-			if (reservation.getDate_start().after(dateStart) && reservation.getDate_end().before(dateEnd)){
+			if (reservation.getCourt().getId() == courtId && reservation.getDate_start().after(dateStart) && reservation.getDate_end().before(dateEnd)){
 				wantedReservations.add(reservation);				
 			} else {				
 			}
