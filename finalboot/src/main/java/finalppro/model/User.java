@@ -21,7 +21,7 @@ public class User implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
-	private String name, surname, nickname, password, email;
+	private String name, surname, username, password, email;
 	@OneToOne
 	private Address address;
 	@OneToOne
@@ -34,13 +34,13 @@ public class User implements Serializable{
 		
 	}
 	
-	public User(int id, String name, String surname, String nickname, String password, String email, Address address,
+	public User(int id, String name, String surname, String username, String password, String email, Address address,
 			Role role, Collection<Reservation> reservations) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
-		this.nickname = nickname;
+		this.username = username;
 		this.password = password;
 		this.email = email;
 		this.address = address;
@@ -66,11 +66,11 @@ public class User implements Serializable{
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-	public String getNickname() {
-		return nickname;
+	public String getUsername() {
+		return username;
 	}
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	public String getPassword() {
 		return password;

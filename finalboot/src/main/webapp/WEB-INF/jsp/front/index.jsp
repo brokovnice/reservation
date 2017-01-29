@@ -1,7 +1,9 @@
 
+<%@page import="finalppro.model.UserSession"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page session="true" %>
 
 <html>
 <head>
@@ -48,12 +50,21 @@
   							<ul class="dropdown-menu">
   							
   							<c:forEach var="court" items="${courts}" >  								
-								<li><a href="#" class="courtItem" data-courtId="${court.id}">${court.name} ${court.active}</a></li>
+								<li><a href="#" class="courtItem" data-courtId="${court.id}">${court.name}</a></li>
 							</c:forEach>    							
   							</ul>
 						</div> 
 					</li>
-					<li class="text-right"><a href="#">Přihlásit se</a></li>
+					<li>
+					<c:choose>
+					 <c:when test="${empty userSession}">
+					 	<a style="color:white;" class="btn btn-primary" href="login">Přihlásit se</a>
+					 </c:when>
+					 <c:otherwise>
+					 	<a style="color:white;" class="btn btn-primary" href="logout">Odhlásit se (přihlášen jako: <% UserSession us = (UserSession)session.getAttribute("userSession"); out.print(us.getName() + " " + us.getSurname()); %>)</a>
+					 </c:otherwise>
+					</c:choose>
+					</li>
 					
 				</ul>
 			</div>
@@ -146,7 +157,7 @@ $(document).ready(function() {
 		//$(this)
 		//$('#calendar').fullCalendar( 'removeEventSources' );
 		//fcSources = {};
-		//$id = $(this).attr('data-courtId');
+		$id = $(this).attr('data-courtId');
 		reloadCalendar();
 
 	});

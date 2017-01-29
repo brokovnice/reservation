@@ -99,7 +99,7 @@ public class FrontController {
 		try {
 			endDate = sdf.parse(endDateStr);
 			startDate = sdf.parse(startDateStr);
-			
+			System.out.println(request.getParameter("courtId"));
 			List<Reservation> reservations = reservationService.findAll(startDate, endDate, Integer.parseInt(request.getParameter("courtId")));
 			
 			List<Event> events = new ArrayList<>();

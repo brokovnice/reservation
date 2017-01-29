@@ -39,4 +39,19 @@ public class UserService {
 	public void delete(int id){
 		userRepository.delete(id);
 	}
+	
+	public int authenticate(String username, String password){
+		int userId = -1;		
+		for (User user : userRepository.findAll()) {
+			System.out.println(user.getUsername()+username+" "+user.getPassword()+password);
+			
+			if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+				System.out.println("baaang");
+				userId = user.getId();
+			}
+		}
+		
+		System.out.println(Integer.toString(userId));
+		return userId;
+	}
 }
