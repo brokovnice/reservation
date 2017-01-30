@@ -61,7 +61,7 @@
 					 	<a style="color:white;" class="btn btn-primary" href="login">Přihlásit se</a>
 					 </c:when>
 					 <c:otherwise>
-					 	<a style="color:white;" class="btn btn-primary" href="logout">Odhlásit se (přihlášen jako: <% UserSession us = (UserSession)session.getAttribute("userSession"); out.print(us.getName() + " " + us.getSurname()); %>)</a>
+					 	<a style="color:white;" id="login-text" class="btn btn-primary" href="logout">Odhlásit se (přihlášen jako: <% UserSession us = (UserSession)session.getAttribute("userSession"); out.print(us.getName() + " " + us.getSurname()); %>)</a>
 					 </c:otherwise>
 					</c:choose>
 					</li>
@@ -83,9 +83,15 @@
             <label for="note">Hráč</label>
             <input type="text" name="note" id="note" class="text ui-widget-content ui-corner-all" required placeholder="Jméno příjmení" disabled><br>
             <label for="start">Začátek</label>
-            <input type="text" name="start" id="start" class="text ui-widget-content ui-corner-all" onchange="if (!(this.value.match(/^(1[0-9]|2[0-3]|0[8-9]):[0-5][0-9]$/))) this.value = '';" required placeholder="09:00"><br>
+            <input type="text" name="start" id="start" class="text ui-widget-content ui-corner-all" required placeholder="09:00"><br>
             <label for="end">Konec</label>
+            <input type="text" name="end" id="end" class="text ui-widget-content ui-corner-all" required placeholder="10:00">
+            
+            <!-- 
+            <input type="text" name="start" id="start" class="text ui-widget-content ui-corner-all" onchange="if (!(this.value.match(/^(1[0-9]|2[0-3]|0[8-9]):[0-5][0-9]$/))) this.value = '';" required placeholder="09:00"><br>            
             <input type="text" name="end" id="end" class="text ui-widget-content ui-corner-all" onchange="if (!((this.value.match(/^([01]?[0-9]|2[0-1]):[0-5][0-9]$/)) || this.value.match(/^22:00$/))) this.value = '';" required placeholder="10:00">
+             -->
+            
        </fieldset>
         
     </form>
@@ -111,6 +117,16 @@ $(document).ready(function() {
 			  
 	  };
 	  
+	    //vycisti dialog. Just to be sure
+	    function clearDialog() {
+	        $("#hdnId").val('');
+	        $("#start").val('');
+	        $("#hdnStart").val('');
+	        $("#end").val('');
+	        $("#hdnEnd").val('');
+	        $("#note").val('');
+	    };
+	  
 	    //nastavení paremterů dialogu pro rezervace (update, create)
 	    $("#reservationDialog").dialog({
 	        autoOpen: false,
@@ -125,14 +141,14 @@ $(document).ready(function() {
 	    
 	    //nastavení timepickeru
 	    $('#start').timepicker({
-	        'minTime': '08:00',
-	        'maxTime': '22:00',
+	       /* 'minTime': '00:00',
+	        'maxTime': '22:00',*/
 	        'timeFormat': 'H:i'
 	    });
 	    
 	    $('#end').timepicker({
-	        'minTime': '08:00',
-	         'maxTime': '22:00',
+	       /* 'minTime': '08:00',
+	         'maxTime': '22:00',*/
 	         'timeFormat': 'H:i'
 	    });  
 	    
@@ -225,23 +241,131 @@ $(document).ready(function() {
         header: {
         left: 'today',
         center: 'prev title next',
-        right: 'month'
+        right: 'month,agendaWeek'
+    },
+dayClick: function(date, jsEvent, view) { //kliknutí do dne (mimo event)
+
+
+        //vypocet noveho data part 1/3
+        var dateStart = new Date(date);
+        var dateEnd = new Date(date);
+        var timeStart = (dateStart.getHours()*60 + dateStart.getMinutes());
+        //var timeStart = 0;
+        //alert(timeStart);
+        var timeEnd = parseInt(timeStart);
+        var delkaRezervace = parseInt(120); //prednastav rezervaci na 2 hodky
+
+        //alert(dateStart);
+        //alert(dateEnd);
+        //dateEnd.setHours(dateEnd.getHours()+2);
+        //alert(dateEnd);
+       // var timeStart = (dateStart.getHours()*60 + dateStart.getMinutes());
+       // var timeEnd = (dateEnd.getHours()*60 + dateEnd.getMinutes());
+        $('#start').val((timeEnd/60>>0) - 1 + ':' + '00');
+        $('#end').val((timeEnd/60>>0) + (delkaRezervace/60>>0) - 1 + ':' + '00'); 
+        $('#note').val('');
+        var player = $('#login-text').text();
+        if (player !== '') {
+        	var player2 = player.split(":");
+        	$('#note').val(player2[1].slice(0, -1));
+        } 
+        //alert($('#login-text').text());
+        $("#hdnStart").val(dateStart);
+        $("#hdnEnd").val(dateEnd);        
+        $('#reservationDialog').dialog('option', 'title', 'Rezervace - '+date.format('DD. MM. YYYY'));
+                
+                
+          $("#reservationDialog").dialog(
+                    'option',
+                    'buttons', {
+                         "save":{
+                        text:'Zarezervovat',
+                        className:'save',
+                        click: function() {
+                             if ($('#note').val() === '') {
+                                displayNoty('Pro rezervaci se musíte přihlásit', 'warning');
+                                return 'return';
+                            } else if ($('#start').val() === '') {
+                                displayNoty('Zadejte začátek rezervace', 'warning');
+                                return;
+                            } else if ($('#end').val() === '') {
+                                displayNoty('Zadejte konec rezervace', 'warning');
+                                return;
+                            }
+                            //vypocet noveho data part 3/3
+                            var casStart = $("#start").val().split(":");
+                            var casEnd = $("#end").val().split(":");
+                            var timeStart2 = (parseInt(casStart[0])*60 + parseInt(casStart[1]));
+                            var timeEnd2 = (parseInt(casEnd[0])*60 + parseInt(casEnd[1]));
+                            var timeStart3 = (timeStart2 - timeStart);                            
+                            var timeEnd3 = (timeEnd2 - timeEnd); 
+                            dateStart.setHours(dateStart.getHours() + (timeStart3/60>>0));
+                            dateEnd.setHours(dateEnd.getHours() + (timeEnd3/60>>0));
+                            dateStart.setMinutes(dateStart.getMinutes() + timeStart3%60);
+                            dateEnd.setMinutes(dateEnd.getMinutes() + timeEnd3%60);
+                            $("#hdnStart").val(dateStart);
+                            $("#hdnEnd").val(dateEnd);
+                            if (timeStart2 > timeEnd2){
+                            	displayNoty('Konec rezervace musí být větší než začátek', 'warning');
+                            	return;
+                            } 
+                            
+                            $.ajax({
+                                url: 'create-reservation',
+                                type: 'GET',
+                                contentType:'application/json',
+                                data: { 
+                                    start: $("#hdnStart").val(),
+                                    end: $("#hdnEnd").val(),
+                                    //note: $("#note").val(),
+                                    courtId: $id,
+                                },
+                                //dataType: "json",
+                                success:function(data) {
+                                    $('#reservationDialog').dialog('close'); 
+                                    /*
+                                    if (data.errorType !== 'none'){
+                                        alert(data.errorData);
+                                    } else {
+                                    
+                                    } */
+                                    reloadCalendar();
+                                    displayNoty(data,'success');
+                                    //refreshCalendar(data.errorData, data.errorType, $('#changeKurtBtn').attr('value'));
+                                },
+                            });
+                        }
+                    },
+                    "cancel":{
+                        text:'Zrušit',
+                        className:'cancel',
+                        click: function() {
+                            $("#reservationDialog").dialog('close');
+                            }
+                    }
+            
+            
+            });
+        
+        $('#reservationDialog').dialog('open');
+
     },
     
-    minTime: '08:00:00',
-    maxTime: '22:00:00',
+    //minTime: '08:00:00',
+    //maxTime: '22:00:00',
     axisFormat: 'H:mm',
-    slotDuration: '01:00:00',
+    //slotDuration: '01:00:00',
     eventLimit: false, // for all non-agenda views. Aby se eventy shlukly
     selectable: false,
-    eventOrder: "number,title",
+    defaultView: 'agendaWeek',
+    //eventOrder: "number,title",
    views: {
         week: { //jak má vypadat týdenní formát 
             titleFormat: 'D. M. YYYY'
         }
 },
         
-    allDaySlot: true, //vyhodit listu s celodenimi udalostmi
+    allDaySlot: false, //vyhodit listu s celodenimi udalostmi
     editable: false,
     /*events: {
         url: 'fillcalendar',
@@ -320,7 +444,7 @@ $(document).ready(function() {
                                    
                                    //refreshCalendar(data.errorData, data.errorType, $('#changeKurtBtn').attr('value'));
                                    reloadCalendar();
-                                   displayNoty('Rezervace úspěšně modifikována','success');
+                                   displayNoty(data,'success');
                                    //alert("yes");
                                     //refreshCalendar($('#calendar').fullCalendar('getView').start, $('#calendar').fullCalendar('getView').end);
                                 },
@@ -372,7 +496,7 @@ $(document).ready(function() {
                                    
                                    //refreshCalendar(data.errorData, data.errorType, $('#changeKurtBtn').attr('value'));
                                    reloadCalendar();
-                                   displayNoty('Rezervace úspěšně smazána','success');
+                                   displayNoty(data,'success');
                                    //alert("yes");
                                     //refreshCalendar($('#calendar').fullCalendar('getView').start, $('#calendar').fullCalendar('getView').end);
                                 },

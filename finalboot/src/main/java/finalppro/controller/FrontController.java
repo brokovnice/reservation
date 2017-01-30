@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import finalppro.dao.UserRepository;
+import finalppro.model.Court;
 import finalppro.model.Event;
 import finalppro.model.Reservation;
 import finalppro.model.User;
@@ -46,6 +48,37 @@ public class FrontController {
 		request.setAttribute("courts", courtService.findAllActive());
 		request.setAttribute("users", userService.findAll());
 		return "front/index";
+	}
+	
+	@GetMapping("/create-reservation")
+	protected void doCreateReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/plain;charset=utf-8");
+		String thrownError = "Nemáte dostatečná oprávnění pro požadovanou akci";		
+		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		
+		if (request.getSession().getAttribute("userSession") != null) {	
+			UserSession us = (UserSession) request.getSession().getAttribute("userSession");
+			User u = userService.findUser(us.getUserId());
+			
+			List<User> usersList = new ArrayList<>();
+			usersList.add(u);
+			
+			Reservation r = new Reservation();
+			Court c = courtService.findCourt(Integer.parseInt(request.getParameter("courtId")));
+			r.setCourt(c);
+			r.setDate_start(new Date(request.getParameter("start")));
+			r.setDate_end(new Date(request.getParameter("end")));
+			r.setUsers(usersList);			
+			
+			reservationService.save(r);			
+			
+			thrownError = "Rezervace úspěšně založena!";		
+			response.setStatus(HttpServletResponse.SC_OK);
+			
+		}
+		
+		PrintWriter out = response.getWriter();
+		out.write(thrownError);
 	}
 	
 	@GetMapping("/update-reservation")
@@ -182,7 +215,12 @@ public class FrontController {
 			List<Event> events = new ArrayList<>();
 			
 			for (Reservation reservation : reservations) {
-				Event e = new Event(reservation.getId(), reservation.getNote(), sdfEvents.format(reservation.getDate_start()), sdfEvents.format(reservation.getDate_end()), "");
+				List<User> users = (List<User>) reservation.getUsers();
+				String owners = "";
+				for (User user : users) {
+					owners += (user.getName() + " " + user.getSurname());
+				}
+				Event e = new Event(reservation.getId(),owners , sdfEvents.format(reservation.getDate_start()), sdfEvents.format(reservation.getDate_end()), "");
 				events.add(e);
 			}
 			
