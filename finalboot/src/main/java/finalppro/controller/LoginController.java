@@ -51,7 +51,32 @@ public class LoginController {
 			request.getSession().setAttribute("userSession", us);
 			return "redirect:/";
 		} else {			
+			request.setAttribute("message", "Neplatné přihlašovací údaje!");
 			return "front/login";
+		}
+	}
+	
+	@GetMapping("/login-admin")
+	public String loginFormAdmin(HttpServletRequest request, Model model){
+		UserSession us = (UserSession)request.getSession().getAttribute("userSession");
+		
+		model.addAttribute("login", new Login());		
+		return "admin/login";
+	}
+	
+	@PostMapping("/login-admin")
+	public String loginFormAdmin(HttpServletRequest request, @ModelAttribute Login login){
+		request.getSession().invalidate();
+		
+		int userId = userService.authenticate(login.getUsername(), login.getPassword());
+		if (userId != -1){
+			User u = userService.findUser(userId);
+			UserSession us = new UserSession(userId, new Date(),u.getName(), u.getSurname());
+			request.getSession().setAttribute("userSession", us);
+			return "admin/index";
+		} else {			
+			request.setAttribute("message", "Neplatné přihlašovací údaje!");
+			return "admin/login";
 		}
 	}
 	

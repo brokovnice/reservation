@@ -33,7 +33,13 @@ public class ReservationService {
 	public List<Reservation> findAll(Date dateStart, Date dateEnd, int courtId){
 		List<Reservation> wantedReservations = new ArrayList<>();
 		for (Reservation reservation : reservationRepository.findAll()) {
-			if (reservation.getCourt().getId() == courtId && reservation.getDate_start().after(dateStart) && reservation.getDate_end().before(dateEnd)){
+			if (reservation.getCourt().getId() == courtId && (
+					(reservation.getDate_start().before(dateEnd) && reservation.getDate_start().after(dateStart)) ||
+					(reservation.getDate_end().after(dateStart) && reservation.getDate_end().before(dateEnd)) ||
+					(reservation.getDate_start().after(dateStart) && reservation.getDate_end().before(dateEnd)) ||
+					(reservation.getDate_start().before(dateStart) && reservation.getDate_end().after(dateEnd))
+					)
+					){
 				wantedReservations.add(reservation);				
 			} else {				
 			}

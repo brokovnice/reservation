@@ -46,7 +46,7 @@
 </div>
 	</c:if>  
 	
-<form action="login" method="post">
+<form action="login-admin" method="post">
 <div class="container">
     <div class="row">
         <div class="col-md-offset-5 col-md-3">

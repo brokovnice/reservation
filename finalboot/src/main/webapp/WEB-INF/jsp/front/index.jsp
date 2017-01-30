@@ -65,6 +65,9 @@
 					 </c:otherwise>
 					</c:choose>
 					</li>
+					<li>
+					<a style="color:white;" class="btn btn-primary" href="admin">Administrace</a>
+					</li>
 					
 				</ul>
 			</div>
@@ -333,6 +336,13 @@ dayClick: function(date, jsEvent, view) { //kliknutí do dne (mimo event)
                                     displayNoty(data,'success');
                                     //refreshCalendar(data.errorData, data.errorType, $('#changeKurtBtn').attr('value'));
                                 },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                	if(xhr.responseText !== ''){
+                                		displayNoty(ajaxOptions+": "+xhr.responseText,'error');
+                                    }else{
+                                        displayNoty(ajaxOptions+": "+thrownError, 'warning');
+                                    }  
+                                  },
                             });
                         }
                     },

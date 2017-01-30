@@ -49,7 +49,7 @@ public class FrontController {
 		request.setAttribute("users", userService.findAll());
 		return "front/index";
 	}
-	
+		
 	@GetMapping("/create-reservation")
 	protected void doCreateReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/plain;charset=utf-8");
@@ -57,23 +57,30 @@ public class FrontController {
 		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		
 		if (request.getSession().getAttribute("userSession") != null) {	
-			UserSession us = (UserSession) request.getSession().getAttribute("userSession");
-			User u = userService.findUser(us.getUserId());
 			
-			List<User> usersList = new ArrayList<>();
-			usersList.add(u);
+			if (checkReservationDate(new Date(request.getParameter("start")), new Date(request.getParameter("end")), Integer.parseInt(request.getParameter("courtId")))){
+				UserSession us = (UserSession) request.getSession().getAttribute("userSession");
+				User u = userService.findUser(us.getUserId());
+				
+				List<User> usersList = new ArrayList<>();
+				usersList.add(u);
+				
+				Reservation r = new Reservation();
+				Court c = courtService.findCourt(Integer.parseInt(request.getParameter("courtId")));
+				r.setCourt(c);
+				r.setDate_start(new Date(request.getParameter("start")));
+				r.setDate_end(new Date(request.getParameter("end")));
+				r.setUsers(usersList);			
+				
+				reservationService.save(r);			
+				
+				thrownError = "Rezervace úspěšně založena!";		
+				response.setStatus(HttpServletResponse.SC_OK);
+			} else {
+				thrownError = "Termín rezervace je plný!";		
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
 			
-			Reservation r = new Reservation();
-			Court c = courtService.findCourt(Integer.parseInt(request.getParameter("courtId")));
-			r.setCourt(c);
-			r.setDate_start(new Date(request.getParameter("start")));
-			r.setDate_end(new Date(request.getParameter("end")));
-			r.setUsers(usersList);			
-			
-			reservationService.save(r);			
-			
-			thrownError = "Rezervace úspěšně založena!";		
-			response.setStatus(HttpServletResponse.SC_OK);
 			
 		}
 		
@@ -234,4 +241,14 @@ public class FrontController {
 			e.printStackTrace();
 		}
 		}
+	
+	private boolean checkReservationDate(Date start, Date end, int courtId){
+	
+		List<Reservation> reservations = reservationService.findAll(start, end, courtId);
+		if (reservations.size() > 0){
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
