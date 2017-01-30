@@ -1,14 +1,19 @@
 package finalppro.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 @Entity(name="reservation")
@@ -21,20 +26,34 @@ public class Reservation implements Serializable{
 	private String note;
 	@OneToOne
 	private Court court;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_reservation", joinColumns = @JoinColumn(name = "reservation_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private Collection<User> users;
 	
 	public Reservation(){
 		
 	}	
 	
-	public Reservation(int id, Date date_start, Date date_end, String note, Court court) {
+	public Reservation(int id, Date date_start, Date date_end, String note, Court court, Collection<User> users) {
 		super();
 		this.id = id;
 		this.date_start = date_start;
 		this.date_end = date_end;
 		this.note = note;
 		this.court = court;
+		this.users = users;
 	}
 	
+	
+	
+	public Collection<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Collection<User> users) {
+		this.users = users;
+	}
+
 	public int getId() {
 		return id;
 	}

@@ -15,9 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;import finalppro.dao.UserRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import finalppro.dao.UserRepository;
 import finalppro.model.Event;
 import finalppro.model.Reservation;
+import finalppro.model.User;
+import finalppro.model.UserSession;
+import finalppro.model.UserType;
 import finalppro.service.CourtService;
 import finalppro.service.ReservationService;
 import finalppro.service.UserService;
@@ -44,34 +50,105 @@ public class FrontController {
 	
 	@GetMapping("/update-reservation")
 	protected void doUpdateReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");
-		String msg = "";
-		PrintWriter out = response.getWriter();
-		out.write(new Gson().toJson(msg));
-		
-		//SimpleDateFormat sdfEvents = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
-		SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		response.setContentType("text/plain;charset=utf-8");
+		String thrownError = "Nemáte dostatečná oprávnění pro požadovanou akci";		
+		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		
 		
-		
-		//try {
+		if (request.getSession().getAttribute("userSession") != null) {		
+			UserSession us = (UserSession) request.getSession().getAttribute("userSession");
+			
 			Reservation r = reservationService.findReservation(Integer.parseInt(request.getParameter("id")));
-			//System.out.println(request.getParameter("start"));
 			Date endDate = new Date(request.getParameter("end"));
 			Date startDate = new Date(request.getParameter("start"));
-			//System.out.println(endDate.getDay());
-			System.out.println(s.format(endDate));
-			//startDate = sdfEvents.parse(request.getParameter("end"));
+			
 			r.setDate_start(startDate);
 			r.setDate_end(endDate);
 			r.setNote(request.getParameter("note"));
 			
-			reservationService.save(r);
+			//String my = UserType.values()[1].toString();
+			//System.out.println(my);
+			//System.out.println(Boolean.toString(UserType.values()[userService.findUser(us.getUserId()).getRole().getUserType().ordinal()] == "admin"));
+			//System.out.println(UserType.values()[userService.findUser(us.getUserId()).getRole().getUserType().ordinal()].toString().equals("admin"));
+			if (UserType.values()[userService.findUser(us.getUserId()).getRole().getUserType().ordinal()].toString().equals("admin")){
+				//System.out.println("admin");
+				thrownError = "Rezervace úspěšně modifikována";
+				response.setStatus(HttpServletResponse.SC_OK);
+				reservationService.save(r);
+			} else {
+			
+				for (User user : r.getUsers()) {		
+					if (user.getId() == us.getUserId()) {
+						System.out.println("normal");
+						thrownError = "Rezervace úspěšně modifikována";
+						response.setStatus(HttpServletResponse.SC_OK);
+						reservationService.save(r);
+					}
+				}
+			}
+		}
+		
+		
+		
+		//SimpleDateFormat sdfEvents = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
+		//SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		
+		
+		
+		//try {
+			//Reservation r = reservationService.findReservation(Integer.parseInt(request.getParameter("id")));			
+			//System.out.println(request.getParameter("start"));
+			//Date endDate = new Date(request.getParameter("end"));
+			//Date startDate = new Date(request.getParameter("start"));
+			//System.out.println(endDate.getDay());
+			//System.out.println(s.format(endDate));
+			//startDate = sdfEvents.parse(request.getParameter("end"));
+			//r.setDate_start(startDate);
+			//r.setDate_end(endDate);
+			//r.setNote(request.getParameter("note"));
+			
+			//reservationService.save(r);
 		/*} catch (ParseException e){
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}			*/	
 	
-		response.setStatus(HttpServletResponse.SC_OK);
+		//String thrownError = "Rezervace úspěšně editována";
+		//response.setStatus(HttpServletResponse.SC_OK);
+		PrintWriter out = response.getWriter();
+		out.write(thrownError);
+	}
+	
+	@GetMapping("/delete-reservation")
+	protected void doDeleteReservation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Reservation r = reservationService.findReservation(Integer.parseInt(request.getParameter("id")));
+				
+		response.setContentType("text/plain;charset=utf-8");
+		String thrownError = "Nemáte dostatečná oprávnění pro požadovanou akci";		
+		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		
+		if (request.getSession().getAttribute("userSession") != null) {		
+			UserSession us = (UserSession) request.getSession().getAttribute("userSession");
+				
+			if (userService.findUser(us.getUserId()).getRole().getUserType().equals("admin")){
+				reservationService.delete(Integer.parseInt(request.getParameter("id")));			
+				thrownError = "Good";
+				response.setStatus(HttpServletResponse.SC_OK);
+			} else {
+				for (User user : r.getUsers()) {
+					if (user.getId() == us.getUserId()) {
+						reservationService.delete(Integer.parseInt(request.getParameter("id")));			
+						thrownError = "Good";
+						System.out.println("Goood");
+						response.setStatus(HttpServletResponse.SC_OK);
+					}
+				}
+			}
+		} 
+		
+		PrintWriter out = response.getWriter();
+		//out.write(new Gson().toJson(thrownError));
+		out.write(thrownError);
+		//out.flush();
 	}
 	
 	@GetMapping("/fillcalendar")

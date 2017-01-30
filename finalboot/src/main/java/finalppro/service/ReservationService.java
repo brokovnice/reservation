@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import finalppro.dao.ReservationRepository;
 import finalppro.model.Reservation;
+import finalppro.model.User;
 
 @Service
 @Transactional

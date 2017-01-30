@@ -81,7 +81,7 @@
             <input type="hidden" id="hdnStart" />
             <input type="hidden" id="hdnEnd" />
             <label for="note">Hráč</label>
-            <input type="text" name="note" id="note" class="text ui-widget-content ui-corner-all" required placeholder="Jméno příjmení"><br>
+            <input type="text" name="note" id="note" class="text ui-widget-content ui-corner-all" required placeholder="Jméno příjmení" disabled><br>
             <label for="start">Začátek</label>
             <input type="text" name="start" id="start" class="text ui-widget-content ui-corner-all" onchange="if (!(this.value.match(/^(1[0-9]|2[0-3]|0[8-9]):[0-5][0-9]$/))) this.value = '';" required placeholder="09:00"><br>
             <label for="end">Konec</label>
@@ -310,7 +310,7 @@ $(document).ready(function() {
                                     //courtId: $('#changeKurtBtn').attr('value'),
                                 },
                                 //data: newEvent,
-                                dataType: "json",
+                                //dataType: "json",
                                 success:function(data) { 
                                     //if ()
                                     //alert(data.errorData);
@@ -325,7 +325,11 @@ $(document).ready(function() {
                                     //refreshCalendar($('#calendar').fullCalendar('getView').start, $('#calendar').fullCalendar('getView').end);
                                 },
                                 error: function (xhr, ajaxOptions, thrownError) {
-                                    displayNoty('Vyskytla se chyba: '+xhr.status+' '+thrownError+' '+ajaxOptions,'error');
+                                	if(xhr.responseText !== ''){
+                                		displayNoty(ajaxOptions+": "+xhr.responseText,'error');
+                                    }else{
+                                        displayNoty(ajaxOptions+": "+thrownError, 'warning');
+                                    }  
                                 	//alert(xhr.status);
                                     //alert(thrownError);
                                     //alert(ajaxOptions);
@@ -338,8 +342,54 @@ $(document).ready(function() {
                         text:'Zrušit',
                         className:'cancel',
                         click: function() {
+                        	
                             clearDialog();
-                            $("#reservationDialog").dialog('close');
+                            
+                            $('#reservationDialog').dialog('close');
+                            }
+                    },
+                    "delete":{
+                        text:'Smazat',
+                        className:'delete',
+                        click: function() {
+                        	
+                        	$.ajax({
+                                url: 'delete-reservation',
+                                type: 'GET',
+                                contentType:'application/json',
+                                data: { 
+                                    id: $("#hdnId").val(),
+                                    //courtId: $('#changeKurtBtn').attr('value'),
+                                },
+                                //data: newEvent,
+                                //dataType: "json",
+                                success:function(data) { 
+                                    //if ()
+                                    //alert(data.errorData);
+                                   $('#reservationDialog').dialog('close');
+                                   //$("#errorText").text(data.errorData);
+                                   //$('#reservationDialogError').dialog('open');
+                                   
+                                   //refreshCalendar(data.errorData, data.errorType, $('#changeKurtBtn').attr('value'));
+                                   reloadCalendar();
+                                   displayNoty('Rezervace úspěšně smazána','success');
+                                   //alert("yes");
+                                    //refreshCalendar($('#calendar').fullCalendar('getView').start, $('#calendar').fullCalendar('getView').end);
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                	if(xhr.responseText !== ''){
+                                		displayNoty(ajaxOptions+": "+xhr.responseText,'error');
+                                    }else{
+                                        displayNoty(ajaxOptions+": "+thrownError, 'warning');
+                                    }  
+                                	
+                                	//alert(xhr.status);
+                                    //alert(thrownError);
+                                    //alert(ajaxOptions);
+                                  },
+                                
+                            });
+                        	
                             }
                     }
                 
