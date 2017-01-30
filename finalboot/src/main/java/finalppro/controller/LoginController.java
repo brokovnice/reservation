@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import finalppro.model.Login;
 import finalppro.model.User;
 import finalppro.model.UserSession;
+import finalppro.model.UserType;
 import finalppro.service.UserService;
 
 @Controller
@@ -69,7 +70,7 @@ public class LoginController {
 		request.getSession().invalidate();
 		
 		int userId = userService.authenticate(login.getUsername(), login.getPassword());
-		if (userId != -1){
+		if (userId != -1 && UserType.values()[userService.findUser(userId).getRole().getUserType().ordinal()].toString().equals("admin")){
 			User u = userService.findUser(userId);
 			UserSession us = new UserSession(userId, new Date(),u.getName(), u.getSurname());
 			request.getSession().setAttribute("userSession", us);

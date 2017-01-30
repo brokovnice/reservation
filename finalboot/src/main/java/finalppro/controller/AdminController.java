@@ -45,7 +45,8 @@ public class AdminController {
 	@GetMapping("/admin")
 	public String home(HttpServletRequest request){
 		UserSession us = (UserSession) request.getSession().getAttribute("userSession"); 
-		if (us != null){
+		if (us != null && UserType.values()[userService.findUser(us.getUserId()).getRole().getUserType().ordinal()].toString().equals("admin")){
+			System.out.println(UserType.values()[userService.findUser(us.getUserId()).getRole().getUserType().ordinal()].toString());
 			if (UserType.values()[userService.findUser(us.getUserId()).getRole().getUserType().ordinal()].toString().equals("admin")){
 				return "admin/index";
 			} else {

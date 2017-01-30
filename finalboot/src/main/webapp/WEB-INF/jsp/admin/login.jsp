@@ -28,7 +28,7 @@
 
 <div role="navigation">
 		<div class="navbar navbar-inverse">
-			<a href="/" class="navbar-brand">Přihlášení</a>			
+			<a href="login-admin" class="navbar-brand">Přihlášení</a>			
 			<div class="navbar-collapse collapse">
 			</div>
 		</div>
