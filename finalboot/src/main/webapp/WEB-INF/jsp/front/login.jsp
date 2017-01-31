@@ -11,16 +11,16 @@
 			  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
 			  crossorigin="anonymous"></script>
 	
-	<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
 	
 	<!-- Jquery UI -->
-	<script type="text/javascript" src="static/js/jquery-ui.min.js"></script>
-	<link href="static/css/jquery-ui.min.css" rel="stylesheet">
+	<script type="/text/javascript" src="static/js/jquery-ui.min.js"></script>
+	<link href="/static/css/jquery-ui.min.css" rel="stylesheet">
 	
 	
 	
-	<link href="static/css/bootstrap.min.css" rel="stylesheet">
-	<link href="static/css/style.css" rel="stylesheet">
+	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/css/style.css" rel="stylesheet">
 	
 	
 </head>
@@ -28,7 +28,7 @@
 
 <div role="navigation">
 		<div class="navbar navbar-inverse">
-			<a href="login" class="navbar-brand">Přihlášení</a>			
+			<a href="/login" class="navbar-brand">Přihlášení</a>			
 			<div class="navbar-collapse collapse">
 			</div>
 		</div>
@@ -54,7 +54,7 @@
             <h1>Přihlašte se</h1>
             <input type="text" class="form-control input-sm chat-input" name="username" placeholder="uživatel" />
             </br>
-            <input type="text" class="form-control input-sm chat-input" name="password" placeholder="heslo" />
+            <input type="password" class="form-control input-sm chat-input" name="password" placeholder="heslo" />
             </br>
             <div class="wrapper">
             <span class="group-btn">     

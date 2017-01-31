@@ -29,15 +29,15 @@ public class LoginController {
 	UserService userService;
 	
 	@GetMapping("/login")
-	public String loginForm(HttpServletRequest request, Model model){
+	public String loginForm(HttpServletRequest request/*, Model model*/){
 		UserSession us = (UserSession)request.getSession().getAttribute("userSession");
-		
+		/*
 		if (us != null) {
 			System.out.println("asdasdasasdsd"+us.getUserId());
 		} else {
 			System.out.println("null buddy");
-		}
-		model.addAttribute("login", new Login());		
+		}*/
+		/*model.addAttribute("login", new Login());	*/	
 		return "front/login";
 	}
 	
@@ -57,15 +57,15 @@ public class LoginController {
 		}
 	}
 	
-	@GetMapping("/login-admin")
-	public String loginFormAdmin(HttpServletRequest request, Model model){
+	@GetMapping("/admin/login")
+	public String loginFormAdmin(HttpServletRequest request/*, Model model*/){
 		UserSession us = (UserSession)request.getSession().getAttribute("userSession");
 		
-		model.addAttribute("login", new Login());		
+		//model.addAttribute("login", new Login());		
 		return "admin/login";
 	}
 	
-	@PostMapping("/login-admin")
+	@PostMapping("/admin/login")
 	public String loginFormAdmin(HttpServletRequest request, @ModelAttribute Login login){
 		request.getSession().invalidate();
 		

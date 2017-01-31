@@ -44,7 +44,7 @@ public class FrontController {
 	
 	@GetMapping("/")
 	public String home(HttpServletRequest request){
-		System.out.println(courtService.findAllActive());
+		//System.out.println(courtService.findAllActive());
 		request.setAttribute("courts", courtService.findAllActive());
 		request.setAttribute("users", userService.findAll());
 		return "front/index";

@@ -45,32 +45,28 @@
 	
 </div>
 	</c:if>  
-	
-<form action="/admin/login" method="post">
-<div class="container">
-    <div class="row">
-        <div class="col-md-offset-5 col-md-3">
-            <div class="form-login">
-            <h1>Přihlašte se</h1>
-            <input type="text" class="form-control input-sm chat-input" name="username" placeholder="uživatel" />
-            </br>
-            <input type="password" class="form-control input-sm chat-input" name="password" placeholder="heslo" />
-            </br>
-            <div class="wrapper">
-            <span class="group-btn">     
-            <button type="submit" class="btn btn-primary">Přihlásit se</button>
-                
-            </span>
-            </div>
-            </div>
-        
-        </div>
-    </div>
 </div>
-</form>
-	
+<form style="max-width: 400px; margin:auto;" action="/admin/users/edit/${user.id}" method="post" class="form-horizontal">
+<h1 class="text-center">Editace uživatele</h1>
+<div class="form-group">
+    <label for="name">Jméno:</label>
+    <input type="text" class="form-control" name="name" value="${user.name}">
+  </div>
+  
+  <div class="form-group">
+    <label for="name">Příjmení:</label>
+    <input type="text" class="form-control" name="surname" value="${user.surname}">
+  </div>
+  
+  
 
-</div>
+	<button type="submit" class="btn btn-default">Uložit</button>
+                
+        
+</form>
+
+
+
 
 		
 		

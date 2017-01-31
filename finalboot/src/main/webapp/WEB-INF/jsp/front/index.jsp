@@ -12,29 +12,29 @@
 			  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
 			  crossorigin="anonymous"></script>
 	
-	<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
 	
 	<!-- Jquery UI -->
-	<script type="text/javascript" src="static/js/jquery-ui.min.js"></script>
-	<link href="static/css/jquery-ui.min.css" rel="stylesheet">
+	<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+	<link href="/static/css/jquery-ui.min.css" rel="stylesheet">
 	
 	
 	
-	<link href="static/css/bootstrap.min.css" rel="stylesheet">
-	<link href="static/css/style.css" rel="stylesheet">
+	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/css/style.css" rel="stylesheet">
 	
 	<!-- Fullcalendar -->
-	<script type="text/javascript" src="static/js/moment.js"></script>
-	<link href="static/css/fullcalendar.min.css" rel="stylesheet">
-	<script type="text/javascript" src="static/js/fullcalendar.min.js"></script>
-	<script type="text/javascript" src="static/js/cs.js"></script>
+	<script type="text/javascript" src="/static/js/moment.js"></script>
+	<link href="/static/css/fullcalendar.min.css" rel="stylesheet">
+	<script type="text/javascript" src="/static/js/fullcalendar.min.js"></script>
+	<script type="text/javascript" src="/static/js/cs.js"></script>
 	
 	<!-- Noty -->
-	<script type="text/javascript" src="static/js/noty/packaged/jquery.noty.packaged.min.js"></script>
+	<script type="text/javascript" src="/static/js/noty/packaged/jquery.noty.packaged.min.js"></script>
 	
 	<!-- Timepicker -->
-	<script type="text/javascript" src="static/js/jquery.timepicker.min.js"></script>
-	<link href="static/css/jquery.timepicker.css" rel="stylesheet">
+	<script type="text/javascript" src="/static/js/jquery.timepicker.min.js"></script>
+	<link href="/static/css/jquery.timepicker.css" rel="stylesheet">
 	
 </head>
 <body>
@@ -58,15 +58,15 @@
 					<li>
 					<c:choose>
 					 <c:when test="${empty userSession}">
-					 	<a style="color:white;" class="btn btn-primary" href="login">Přihlásit se</a>
+					 	<a style="color:white;" class="btn btn-primary" href="/login">Přihlásit se</a>
 					 </c:when>
 					 <c:otherwise>
-					 	<a style="color:white;" id="login-text" class="btn btn-primary" href="logout">Odhlásit se (přihlášen jako: <% UserSession us = (UserSession)session.getAttribute("userSession"); out.print(us.getName() + " " + us.getSurname()); %>)</a>
+					 	<a style="color:white;" id="login-text" class="btn btn-primary" href="/logout">Odhlásit se (přihlášen jako: <% UserSession us = (UserSession)session.getAttribute("userSession"); out.print(us.getName() + " " + us.getSurname()); %>)</a>
 					 </c:otherwise>
 					</c:choose>
 					</li>
 					<li>
-					<a style="color:white;" class="btn btn-primary" href="admin">Administrace</a>
+					<a style="color:white;" class="btn btn-primary" href="/admin">Administrace</a>
 					</li>
 					
 				</ul>

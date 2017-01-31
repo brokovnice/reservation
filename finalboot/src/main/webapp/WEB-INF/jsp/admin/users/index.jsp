@@ -3,7 +3,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page session="true" %>
 
 <html>
@@ -16,7 +15,7 @@
 	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
 	
 	<!-- Jquery UI -->
-	<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="static/js/jquery-ui.min.js"></script>
 	<link href="/static/css/jquery-ui.min.css" rel="stylesheet">
 	
 	
@@ -24,8 +23,6 @@
 	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/static/css/style.css" rel="stylesheet">
 	
-	<!-- Noty -->
-	<script type="text/javascript" src="/static/js/noty/packaged/jquery.noty.packaged.min.js"></script>
 	
 </head>
 <body>
@@ -55,6 +52,44 @@
 			</div>
 		</div>
 	</div>
+	
+		
+		
+<div class="text-center" style="padding:50px 0">
+	
+	<c:if test="${not empty message}" >
+<div class="alert alert-danger">
+	
+	${message}
+	
+</div>
+	</c:if>  
+	
+</div>
 
+<table class="table table-striped mytable">
+    <thead>
+      <tr>
+        <th>Jméno</th>
+        <th>Příjmení</th>
+        <th>Adresa</th>
+        <th>Role</th>
+        <th>Akce</th>
+      </tr>
+    </thead>
+    <tbody>
+
+<c:forEach var="user" items="${users}">
+      <tr>
+        <td>${user.name}</td>
+        <td>${user.surname}</td>
+        <td>${user.address.street} ${user.address.city}</td>
+        <td>${user.role.userType}</td>
+        <td><a href="/admin/users/edit/${user.id}"><span class="glyphicon glyphicon-pencil"> </span></a></td>
+      </tr>
+</c:forEach>
+
+    </tbody>
+  </table>
 </body>
 </html>
