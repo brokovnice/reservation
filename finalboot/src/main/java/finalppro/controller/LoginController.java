@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,7 @@ public class LoginController {
 	UserService userService;
 	
 	@GetMapping("/login")
-	public String loginForm(HttpServletRequest request/*, Model model*/){
+	public String loginForm(HttpServletRequest request, ModelMap map/*, Model model*/){
 		UserSession us = (UserSession)request.getSession().getAttribute("userSession");
 		/*
 		if (us != null) {
@@ -38,7 +39,8 @@ public class LoginController {
 			System.out.println("null buddy");
 		}*/
 		/*model.addAttribute("login", new Login());	*/	
-		return "front/login";
+		map.addAttribute("action", "/login");
+		return "/login";
 	}
 	
 	@PostMapping("/login")
@@ -53,16 +55,16 @@ public class LoginController {
 			return "redirect:/";
 		} else {			
 			request.setAttribute("message", "Neplatné přihlašovací údaje!");
-			return "front/login";
+			return "/login";
 		}
 	}
 	
 	@GetMapping("/admin/login")
-	public String loginFormAdmin(HttpServletRequest request/*, Model model*/){
+	public String loginFormAdmin(HttpServletRequest request, ModelMap map/*, Model model*/){
 		UserSession us = (UserSession)request.getSession().getAttribute("userSession");
-		
+		map.addAttribute("action", "/login");
 		//model.addAttribute("login", new Login());		
-		return "admin/login";
+		return "/login";
 	}
 	
 	@PostMapping("/admin/login")
@@ -77,7 +79,7 @@ public class LoginController {
 			return "admin/index";
 		} else {			
 			request.setAttribute("message", "Neplatné přihlašovací údaje!");
-			return "admin/login";
+			return "/login";
 		}
 	}
 	

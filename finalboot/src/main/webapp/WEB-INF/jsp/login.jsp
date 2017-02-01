@@ -46,6 +46,24 @@
 </div>
 	</c:if>  
 	
+	
+	<form style="max-width: 400px; margin:auto;" action="${action}" method="post" class="form-horizontal">
+<h1 class="text-center">Přihlašte se</h1><br>
+<div class="form-group">
+    <label for="username">Uživatelské jméno:</label>
+    <input type="text" class="form-control" name="username" required>
+    
+  </div>
+  <div class="form-group">
+    <label for="password">Heslo:</label>
+    <input type="password" class="form-control" name="password" required>
+    
+  </div>
+  <button type="submit" class="btn btn-default">Přihlásit se</button>
+  
+</form>	
+	
+	<!-- 
 <form action="/admin/login" method="post">
 <div class="container">
     <div class="row">
@@ -69,7 +87,7 @@
 </div>
 </form>
 	
-
+ -->
 </div>
 
 		
