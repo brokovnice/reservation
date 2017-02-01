@@ -14,6 +14,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,15 +30,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import finalppro.dao.UserRepository;
+import finalppro.model.Address;
 import finalppro.model.Court;
 import finalppro.model.Event;
 import finalppro.model.Reservation;
+import finalppro.model.Role;
 import finalppro.model.User;
 import finalppro.model.UserEditForm;
 import finalppro.model.UserSession;
 import finalppro.model.UserType;
+import finalppro.service.AddressService;
 import finalppro.service.CourtService;
 import finalppro.service.ReservationService;
+import finalppro.service.RoleService;
 import finalppro.service.UserService;
 
 import com.google.gson.Gson;
@@ -49,6 +56,10 @@ public class AdminController {
 	private CourtService courtService;
 	@Autowired
 	private ReservationService reservationService;
+	@Autowired
+	private RoleService roleService;
+	@Autowired
+	private AddressService addressService;
 	
 	private boolean checkLogin(HttpServletRequest request){
 		UserSession us = (UserSession) request.getSession().getAttribute("userSession"); 
@@ -78,10 +89,73 @@ public class AdminController {
 	}
 	
 	@GetMapping("/admin/users")
-	public String users(HttpServletRequest request){
+	public String users(HttpServletRequest request, ModelMap map){
 		if (checkLogin(request)){
-			request.setAttribute("users", userService.findAll());
+			map.addAttribute("users", userService.findAll());
+			map.addAttribute("userService", userService);
 			return "/admin/users/index";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}
+	
+	@GetMapping(value="/admin/users/create")	
+	public String userCreate(HttpServletRequest request, ModelMap map){
+		if (checkLogin(request)){			
+			map.addAttribute("title", "Vytvoření nového uživatele");
+			map.addAttribute("action", "/admin/users/create");
+			return "/admin/users/edit";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}
+	
+	@PostMapping(value="/admin/users/create")	
+	public String userCreateSubmitted(HttpServletRequest request, @ModelAttribute UserEditForm userEditForm, ModelMap map){
+		if (checkLogin(request)){
+			//Configuration configuration = new Configuration().configure();
+			//SessionFactory sessionFactory = configuration.buildSessionFactory();
+			
+			//Session session = sessionFactory.openSession();
+		//	session.beginTransaction();
+			
+			
+			User user = new User();
+			Address address = new Address();
+			Role role = roleService.findRole(userEditForm.getUserType());
+			
+			user.setName(userEditForm.getName());
+			user.setSurname(userEditForm.getSurname());
+			user.setEmail(userEditForm.getEmail());
+			user.setUsername(userEditForm.getUsername());
+			user.setPassword(userEditForm.getPassword());
+
+			address.setStreet(userEditForm.getStreet());
+			address.setCity(userEditForm.getCity());
+			address.setPostal_code(userEditForm.getPostal_code());
+			addressService.save(address);
+			//Long addressid = (Long)session.save(address);
+			user.setAddress(address);
+			
+			//int addressId = (int) session.save(address);
+			//Address address2 = session.get(Address.class, addressId);
+			//System.out.println(address2.getStreet() + " id: "+Integer.toString(address2.getId()));
+			roleService.save(role);
+			//user.setAddress(address);
+			//Long roleId = (Long)session.save(role);
+			user.setRole(role);
+			
+			userService.save(user);
+			//Long userid = (Long)session.save(user);
+			//System.out.println(Long.toString(addressid) + " : role: "+Long.toString(roleId) + " user: "+Long.toString(userid));
+			//session.getTransaction().commit();
+			//session.close();
+			
+			//userService.save(user);
+			map.addAttribute("message", "Uživatel úspěšně editován!");
+			return "redirect:/admin/users";
 		} else {
 			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
 			return "/admin/login";
@@ -93,6 +167,9 @@ public class AdminController {
 		if (checkLogin(request)){
 			//user.addAttribute("name", userService.findUser(id).getName());
 			map.addAttribute("user", userService.findUser(id));
+			map.addAttribute("title", "Editace uživatele");
+			map.addAttribute("action", "/admin/users/edit");
+			//System.out.println(userService.findUser(id).getAddress().getPostal_code());
 			//user = userService.findUser(id);
 			//u = userService.findUser(id);
 			
@@ -108,13 +185,42 @@ public class AdminController {
 	}
 	
 	@PostMapping("/admin/users/edit/{id}")
-	public String userEditSubmitted(HttpServletRequest request, @ModelAttribute User user){
+	public String userEditSubmitted(HttpServletRequest request, @PathVariable ("id") int id, @ModelAttribute UserEditForm userEditForm, ModelMap map){
 		if (checkLogin(request)){
-			User oldUser = userService.findUser(user.getId());
-			//oldUser.
-			//System.out.println(user.getName()+" "+user.getSurname()+" "+user.getEmail());
-			//request.setAttribute("message", "okokok ok oko");
-			return "redrect:/admin/users";
+			User oldUser = userService.findUser(id);
+			Address address = oldUser.getAddress();	
+			System.out.println(userEditForm.getUserType());
+			Role r = roleService.findRole(userEditForm.getUserType());
+			System.out.println(r.getUserType().toString());
+			roleService.save(r);
+			oldUser.setName(userEditForm.getName());
+			oldUser.setSurname(userEditForm.getSurname());
+			oldUser.setUsername(userEditForm.getUsername());
+			oldUser.setPassword(userEditForm.getPassword());
+			oldUser.setRole(r);
+			oldUser.setEmail(userEditForm.getEmail());
+			
+			address.setStreet(userEditForm.getStreet());
+			address.setCity(userEditForm.getCity());
+			address.setPostal_code(userEditForm.getPostal_code());
+			addressService.save(address);
+			
+			userService.save(oldUser);
+			
+			map.addAttribute("message", "Uživatel úspěšně editován!");
+			return "redirect:/admin/users";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}
+	
+	@PostMapping(value="/admin/users/delete/{id}")	
+	public String deleteEdit(HttpServletRequest request,  @PathVariable ("id") int id, ModelMap map){
+		if (checkLogin(request)){
+			userService.delete(id);
+			map.addAttribute("message", "Uživatel úspěšně editován!");
+			return "redirect:/admin/users";
 		} else {
 			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
 			return "/admin/login";

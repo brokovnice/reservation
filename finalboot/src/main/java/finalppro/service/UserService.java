@@ -5,14 +5,19 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import finalppro.dao.UserRepository;
+import finalppro.model.Reservation;
 import finalppro.model.User;
+import finalppro.model.UserType;
 
 @Service
 @Transactional
 public class UserService {
+	@Autowired
+	ReservationService reservationService;
 
 	private final UserRepository userRepository;
 	
@@ -28,6 +33,10 @@ public class UserService {
 		return users;
 	}
 	
+	public int countReservationsPerUser(int userId){
+		return findUser(userId).getReservations().size();
+	}
+	
 	public User findUser(int id){
 		return userRepository.findOne(id);
 	}
@@ -37,16 +46,19 @@ public class UserService {
 	}
 	
 	public void delete(int id){
+		for (Reservation reservation : findUser(id).getReservations()) {
+			reservationService.delete(reservation.getId());
+		}		
 		userRepository.delete(id);
 	}
 	
 	public int authenticate(String username, String password){
 		int userId = -1;		
 		for (User user : userRepository.findAll()) {
-			System.out.println(user.getUsername()+username+" "+user.getPassword()+password);
+			//System.out.println(user.getUsername()+username+" "+user.getPassword()+password);
 			
-			if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-				System.out.println("baaang");
+			if (user.getUsername().equals(username) && user.getPassword().equals(password) && !UserType.values()[user.getRole().getUserType().ordinal()].toString().equals("forbidden")) {
+				//System.out.println("baaang");
 				userId = user.getId();
 			}
 		}

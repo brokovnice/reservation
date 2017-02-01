@@ -1,4 +1,6 @@
 
+<%@page import="finalppro.service.UserService"%>
+<%@page import="finalppro.dao.UserRepository"%>
 <%@page import="finalppro.model.UserSession"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -58,21 +60,25 @@
 <div class="text-center" style="padding:50px 0">
 	
 	<c:if test="${not empty message}" >
-<div class="alert alert-danger">
+<div class="alert alert-warning">
 	
 	${message}
 	
 </div>
 	</c:if>  
 	
+	
+	<a href="/admin/users/create"><button type="button" class="btn btn-primary">Přidat uživatele</button></a>
+	
 </div>
-
-<table class="table table-striped mytable">
+<table class="table table-striped mytable ">
     <thead>
       <tr>
         <th>Jméno</th>
         <th>Příjmení</th>
+        <th>Uživatelské jméno</th>
         <th>Adresa</th>
+        <th>Počet aktivních rezervací</th>
         <th>Role</th>
         <th>Akce</th>
       </tr>
@@ -83,9 +89,14 @@
       <tr>
         <td>${user.name}</td>
         <td>${user.surname}</td>
-        <td>${user.address.street} ${user.address.city}</td>
+        <td>${user.username}</td>
+        <td>${user.address.street} ${user.address.city}, ${user.address.postal_code}</td>
+        <td>${userService.countReservationsPerUser(user.id)}</td>
         <td>${user.role.userType}</td>
-        <td><a href="/admin/users/edit/${user.id}"><span class="glyphicon glyphicon-pencil"> </span></a></td>
+        <td>
+        	<a href="/admin/users/edit/${user.id}"><span class="glyphicon glyphicon-pencil"> </span></a>
+        	<a href="/admin/users/delete/${user.id}"><span class="glyphicon glyphicon-trash"> </span></a>
+        </td>
       </tr>
 </c:forEach>
 

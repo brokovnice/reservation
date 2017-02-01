@@ -56,5 +56,13 @@
 		</div>
 	</div>
 
+	<c:if test="${not empty message}" >
+<div class="alert alert-warning">
+	
+	${message}
+	
+</div>
+	</c:if> 
+
 </body>
 </html>

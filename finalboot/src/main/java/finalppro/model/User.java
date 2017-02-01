@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,8 +24,10 @@ public class User implements Serializable{
 	private int id;
 	private String name, surname, username, password, email;
 	@OneToOne
+	@JoinColumn(name="address_id")
 	private Address address;
 	@OneToOne
+	@JoinColumn(name="role_id")
 	private Role role;
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_reservation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "reservation_id"))

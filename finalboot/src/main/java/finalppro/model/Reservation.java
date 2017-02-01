@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,6 +26,7 @@ public class Reservation implements Serializable{
 	private Date date_start, date_end;
 	private String note;
 	@OneToOne
+	@JoinColumn(name="court_id")
 	private Court court;
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_reservation", joinColumns = @JoinColumn(name = "reservation_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
