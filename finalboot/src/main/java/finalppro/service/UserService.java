@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,26 @@ public class UserService {
 			users.add(user);
 		}
 		return users;
+	}
+	
+	public int activePlayers(){
+		int count = 0;
+		for (User user : findAll()) {
+			if (!UserType.values()[user.getRole().getUserType().ordinal()].toString().equals("forbidden")){
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public int forbiddenPlayers(){
+		int count = 0;
+		for (User user : findAll()) {
+			if (UserType.values()[user.getRole().getUserType().ordinal()].toString().equals("forbidden")){
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	public int countReservationsPerUser(int userId){

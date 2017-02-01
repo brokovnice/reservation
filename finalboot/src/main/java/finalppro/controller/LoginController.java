@@ -76,7 +76,7 @@ public class LoginController {
 			User u = userService.findUser(userId);
 			UserSession us = new UserSession(userId, new Date(),u.getName(), u.getSurname());
 			request.getSession().setAttribute("userSession", us);
-			return "admin/index";
+			return "redirect:/admin";
 		} else {			
 			request.setAttribute("message", "Neplatné přihlašovací údaje!");
 			return "/login";

@@ -80,7 +80,13 @@ public class AdminController {
 				return "admin/index";
 			} else {*/
 				//request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
-				return "/admin/index";
+			
+			map.addAttribute("activePlayers", userService.activePlayers());
+			map.addAttribute("activeCourts", courtService.findAllActive().size());
+			map.addAttribute("totalReservations", reservationService.findAll().size());
+			map.addAttribute("forbiddenPlayers", userService.forbiddenPlayers());
+			
+			return "/admin/index";
 			//}
 		
 		} else {
