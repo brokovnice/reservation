@@ -23,6 +23,7 @@ import finalppro.dao.UserRepository;
 import finalppro.model.Court;
 import finalppro.model.Event;
 import finalppro.model.Reservation;
+import finalppro.model.TicketType;
 import finalppro.model.User;
 import finalppro.model.UserSession;
 import finalppro.model.UserType;
@@ -56,12 +57,21 @@ public class FrontController {
 		String thrownError = "Nemáte dostatečná oprávnění pro požadovanou akci";		
 		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		
+		//login
 		if (request.getSession().getAttribute("userSession") != null) {	
 			
-			if (checkReservationDate(new Date(request.getParameter("start")), new Date(request.getParameter("end")), Integer.parseInt(request.getParameter("courtId")))){
+			//prekryv
+			if (checkReservationDate(new Date(request.getParameter("start")), new Date(request.getParameter("end")), Integer.parseInt(request.getParameter("courtId"))) && 
+					new Date(request.getParameter("start")).after(new Date())){
+				
 				UserSession us = (UserSession) request.getSession().getAttribute("userSession");
 				User u = userService.findUser(us.getUserId());
 				
+				//podle typu permice
+				if (TicketType.values()[u.getTicket().getTicketType().ordinal()].toString().equals("free") ||
+						(TicketType.values()[u.getTicket().getTicketType().ordinal()].toString().equals("paid") && 
+						 reservationService.countFutureReservationForUser(u.getId()) < 1)){
+								
 				List<User> usersList = new ArrayList<>();
 				usersList.add(u);
 				
@@ -76,8 +86,12 @@ public class FrontController {
 				
 				thrownError = "Rezervace úspěšně založena!";		
 				response.setStatus(HttpServletResponse.SC_OK);
+				} else {
+					thrownError = "Váš typ permanentky neumožňuje mít více aktivních rezervací";		
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				}
 			} else {
-				thrownError = "Termín rezervace je plný!";		
+				thrownError = "Termín rezervace je neplatný!";		
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 			
@@ -169,7 +183,7 @@ public class FrontController {
 		if (request.getSession().getAttribute("userSession") != null) {		
 			UserSession us = (UserSession) request.getSession().getAttribute("userSession");
 				
-			if (userService.findUser(us.getUserId()).getRole().getUserType().equals("admin")){
+			if (UserType.values()[userService.findUser(us.getUserId()).getRole().getUserType().ordinal()].toString().equals("admin")){
 				reservationService.delete(Integer.parseInt(request.getParameter("id")));			
 				thrownError = "Good";
 				response.setStatus(HttpServletResponse.SC_OK);

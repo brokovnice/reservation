@@ -14,6 +14,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity(name="user")
@@ -32,13 +33,18 @@ public class User implements Serializable{
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_reservation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "reservation_id"))
 	private Collection<Reservation> reservations;
+	@ManyToOne
+	@JoinColumn(name="ticket_id")
+	private Ticket ticket;
 	
 	public User(){
 		
 	}
 	
+
+
 	public User(int id, String name, String surname, String username, String password, String email, Address address,
-			Role role, Collection<Reservation> reservations) {
+			Role role, Collection<Reservation> reservations, Ticket ticket) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -49,7 +55,22 @@ public class User implements Serializable{
 		this.address = address;
 		this.role = role;
 		this.reservations = reservations;
+		this.ticket = ticket;
 	}
+
+
+
+	public Ticket getTicket() {
+		return ticket;
+	}
+
+
+
+	public void setTicket(Ticket ticket) {
+		this.ticket = ticket;
+	}
+
+
 
 	public int getId() {
 		return id;

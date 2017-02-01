@@ -2,7 +2,7 @@ package finalppro.model;
 
 public class UserEditForm {
 
-	private String name, surname, userType, street, city, postal_code, email, password, username;
+	private String name, surname, userType, street, city, postal_code, email, password, username, ticketType;
 	
 	public String getName() {
 		return name;
@@ -63,8 +63,14 @@ public class UserEditForm {
 	public void setUsername(String username) {
 		this.username = username;
 	}
+	public String getTicketType() {
+		return ticketType;
+	}
+	public void setTicketType(String ticketType) {
+		this.ticketType = ticketType;
+	}
 	public UserEditForm(String name, String surname, String userType, String street, String city, String postal_code,
-			String email, String password, String username) {
+			String email, String password, String username, String ticketType) {
 		super();
 		this.name = name;
 		this.surname = surname;
@@ -75,7 +81,9 @@ public class UserEditForm {
 		this.email = email;
 		this.password = password;
 		this.username = username;
+		this.ticketType = ticketType;
 	}
+	
 	
 
 	

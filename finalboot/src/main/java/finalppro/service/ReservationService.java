@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import finalppro.dao.ReservationRepository;
@@ -17,6 +18,9 @@ import finalppro.model.User;
 public class ReservationService {
 
 	private final ReservationRepository reservationRepository;
+	
+	@Autowired
+	private UserService userService;
 	
 	public ReservationService(ReservationRepository reservationRepository){
 		this.reservationRepository = reservationRepository;
@@ -40,6 +44,23 @@ public class ReservationService {
 		return reservations;
 	}
 	
+	public int countFutureReservationForUser(int userId){
+		Date now = new Date();
+		int count = 0;
+		
+		for (Reservation reservation : findAllForUser(userId)) {
+			if (reservation.getDate_start().after(now)){
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	public List<Reservation> findAllForUser(int userId){
+		
+		return (List<Reservation>) userService.findUser(userId).getReservations();
+	}
 	
 	public List<Reservation> findAll(Date dateStart, Date dateEnd, int courtId){
 		List<Reservation> wantedReservations = new ArrayList<>();

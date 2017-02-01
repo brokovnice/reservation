@@ -36,6 +36,7 @@ import finalppro.model.CourtEditForm;
 import finalppro.model.Event;
 import finalppro.model.Reservation;
 import finalppro.model.Role;
+import finalppro.model.Ticket;
 import finalppro.model.User;
 import finalppro.model.UserEditForm;
 import finalppro.model.UserSession;
@@ -44,6 +45,7 @@ import finalppro.service.AddressService;
 import finalppro.service.CourtService;
 import finalppro.service.ReservationService;
 import finalppro.service.RoleService;
+import finalppro.service.TicketService;
 import finalppro.service.UserService;
 
 import com.google.gson.Gson;
@@ -61,6 +63,8 @@ public class AdminController {
 	private RoleService roleService;
 	@Autowired
 	private AddressService addressService;
+	@Autowired
+	private TicketService ticketService;
 	
 	private boolean checkLogin(HttpServletRequest request){
 		UserSession us = (UserSession) request.getSession().getAttribute("userSession"); 
@@ -136,6 +140,7 @@ public class AdminController {
 			User user = new User();
 			Address address = new Address();
 			Role role = roleService.findRole(userEditForm.getUserType());
+			Ticket ticket = ticketService.findTicket(userEditForm.getTicketType());
 			
 			user.setName(userEditForm.getName());
 			user.setSurname(userEditForm.getSurname());
@@ -157,6 +162,9 @@ public class AdminController {
 			//user.setAddress(address);
 			//Long roleId = (Long)session.save(role);
 			user.setRole(role);
+			
+			ticketService.save(ticket);
+			user.setTicket(ticket);
 			
 			userService.save(user);
 			//Long userid = (Long)session.save(user);
@@ -201,10 +209,12 @@ public class AdminController {
 	public String userEditSubmitted(HttpServletRequest request, @PathVariable ("id") int id, @ModelAttribute UserEditForm userEditForm, ModelMap map){
 		if (checkLogin(request)){
 			User oldUser = userService.findUser(id);
-			Address address = oldUser.getAddress();	
-			System.out.println(userEditForm.getUserType());
+			Address address = oldUser.getAddress();			
 			Role r = roleService.findRole(userEditForm.getUserType());
-			System.out.println(r.getUserType().toString());
+			
+			Ticket t = ticketService.findTicket(userEditForm.getTicketType());
+			ticketService.save(t);
+			
 			roleService.save(r);
 			oldUser.setName(userEditForm.getName());
 			oldUser.setSurname(userEditForm.getSurname());
@@ -212,6 +222,7 @@ public class AdminController {
 			oldUser.setPassword(userEditForm.getPassword());
 			oldUser.setRole(r);
 			oldUser.setEmail(userEditForm.getEmail());
+			oldUser.setTicket(t);
 			
 			address.setStreet(userEditForm.getStreet());
 			address.setCity(userEditForm.getCity());
@@ -349,5 +360,20 @@ public class AdminController {
 			return "/login";
 		}
 	}
+	
+	//Permice
+	//kurty
+		@GetMapping("/admin/tickets")
+		public String tickets(HttpServletRequest request, ModelMap map){
+			if (checkLogin(request)){
+				map.addAttribute("tickets", ticketService.findAll());
+				map.addAttribute("ticketService", ticketService);
+				return "/admin/tickets/index";
+			} else {
+				request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+				map.addAttribute("action", "/admin/login");
+				return "/login";
+			}
+		}
 	
 }

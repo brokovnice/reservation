@@ -39,7 +39,7 @@
 				<ul class="nav navbar-nav">
 				<li><a href="/admin/users">Správa uživatelů</a></li>
 				<li><a href="/admin/courts">Správa kurtů</a></li>
-				<li><a href="/admin/users">Permice</a></li>
+				<li><a href="/admin/tickets">Permice</a></li>
 					<li>
 					<c:choose>
 					 <c:when test="${empty userSession}">

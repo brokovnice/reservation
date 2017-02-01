@@ -25,6 +25,7 @@
 	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/static/css/style.css" rel="stylesheet">
 	
+	<link href="/static/css/AdminLTE.css" rel="stylesheet">
 	
 </head>
 <body>
@@ -36,7 +37,7 @@
 				<ul class="nav navbar-nav">
 				<li><a href="/admin/users">Správa uživatelů</a></li>
 				<li><a href="/admin/courts">Správa kurtů</a></li>
-				<li><a href="/admin/users">Permice</a></li>
+				<li><a href="/admin/tickets">Permice</a></li>
 					<li>
 					<c:choose>
 					 <c:when test="${empty userSession}">
@@ -66,7 +67,7 @@
 	
 </div>
 	</c:if>  
-	
+	<h1>Přehled kurtů</h1>
 	
 	<a href="/admin/courts/create"><button type="button" class="btn btn-primary">Přidat kurt</button></a>
 	

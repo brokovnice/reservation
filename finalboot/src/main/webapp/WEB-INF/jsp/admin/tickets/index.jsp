@@ -67,39 +67,23 @@
 	
 </div>
 	</c:if>  
+	<h1>Přehled permanentek</h1>
 	
-	<h1>Přehled hráčů</h1>
-	<a href="/admin/users/create"><button type="button" class="btn btn-primary">Přidat uživatele</button></a>
 	
 </div>
 <table class="table table-striped mytable ">
     <thead>
       <tr>
-        <th>Jméno</th>
-        <th>Příjmení</th>
-        <th>Uživatelské jméno</th>
-        <th>Adresa</th>
-        <th>Typ permanentky</th>
-        <th>Počet aktivních rezervací</th>
-        <th>Role</th>
-        <th>Akce</th>
+        <th>Název</th>
+        <th>Počet</th>
       </tr>
     </thead>
     <tbody>
 
-<c:forEach var="user" items="${users}">
+<c:forEach var="ticket" items="${tickets}">
       <tr>
-        <td>${user.name}</td>
-        <td>${user.surname}</td>
-        <td>${user.username}</td>
-        <td>${user.address.street} ${user.address.city}, ${user.address.postal_code}</td>
-        <td>${user.ticket.name}</td>
-        <td>${userService.countReservationsPerUser(user.id)}</td>
-        <td>${user.role.userType}</td>
-        <td>
-        	<a href="/admin/users/edit/${user.id}"><span class="glyphicon glyphicon-pencil"> </span></a>
-        	<a href="/admin/users/delete/${user.id}"><span class="glyphicon glyphicon-trash"> </span></a>
-        </td>
+        <td>${ticket.name}</td>
+        <td>${ticketService.countUsage(ticket.id)}</td>
       </tr>
 </c:forEach>
 

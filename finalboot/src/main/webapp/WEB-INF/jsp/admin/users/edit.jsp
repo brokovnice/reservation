@@ -90,6 +90,13 @@
 	<div class="radio">
   <label><input type="radio" name="userType" value="forbidden" <c:if test="${user.getRole().getUserType().ordinal() == 2}">checked="checked"</c:if>>Zakázán</label>
 	</div>
+	<br>
+	<div class="radio">
+  <label><input type="radio" name="ticketType" value="free" <c:if test="${user.getTicket().getTicketType().ordinal() == 0 || empty user}">checked="checked"</c:if> >Volná permice</label>
+	</div>
+	<div class="radio">
+  <label><input type="radio" name="ticketType" value="paid" <c:if test="${user.getTicket().getTicketType().ordinal() == 1}">checked="checked"</c:if>>Jednotková permice</label>
+	</div>
   
 
 	<button type="submit" class="btn btn-default">Uložit</button>
