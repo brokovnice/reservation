@@ -36,7 +36,7 @@
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 				<li><a href="/admin/users">Správa uživatelů</a></li>
-				<li><a href="/admin/users">Správa kurtů</a></li>
+				<li><a href="/admin/courts">Správa kurtů</a></li>
 				<li><a href="/admin/users">Permice</a></li>
 					<li>
 					<c:choose>

@@ -5,14 +5,19 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import finalppro.dao.CourtRepository;
 import finalppro.model.Court;
+import finalppro.model.Reservation;
 
 @Service
 @Transactional
 public class CourtService {
+	
+	@Autowired
+	ReservationService reservationService;
 
 	private final CourtRepository courtRepository;
 	
@@ -47,6 +52,9 @@ public class CourtService {
 	}
 	
 	public void delete(int id){
+		for (Reservation reservation : reservationService.findAllPerCourt(id)) {
+			reservationService.delete(reservation.getId());
+		}
 		courtRepository.delete(id);
 	}
 }

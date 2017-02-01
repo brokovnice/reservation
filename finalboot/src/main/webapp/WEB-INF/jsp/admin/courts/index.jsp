@@ -68,34 +68,28 @@
 	</c:if>  
 	
 	
-	<a href="/admin/users/create"><button type="button" class="btn btn-primary">Přidat uživatele</button></a>
+	<a href="/admin/courts/create"><button type="button" class="btn btn-primary">Přidat kurt</button></a>
 	
 </div>
 <table class="table table-striped mytable ">
     <thead>
       <tr>
-        <th>Jméno</th>
-        <th>Příjmení</th>
-        <th>Uživatelské jméno</th>
-        <th>Adresa</th>
-        <th>Počet aktivních rezervací</th>
-        <th>Role</th>
+        <th>Název</th>
+        <th>Ulice</th>
+        <th>Aktivní</th>
         <th>Akce</th>
       </tr>
     </thead>
     <tbody>
 
-<c:forEach var="user" items="${users}">
+<c:forEach var="court" items="${courts}">
       <tr>
-        <td>${user.name}</td>
-        <td>${user.surname}</td>
-        <td>${user.username}</td>
-        <td>${user.address.street} ${user.address.city}, ${user.address.postal_code}</td>
-        <td>${userService.countReservationsPerUser(user.id)}</td>
-        <td>${user.role.userType}</td>
+        <td>${court.name}</td>
+        <td>${court.address.street} ${court.address.city}</td>
+        <td>${court.active}</td>
         <td>
-        	<a href="/admin/users/edit/${user.id}"><span class="glyphicon glyphicon-pencil"> </span></a>
-        	<a href="/admin/users/delete/${user.id}"><span class="glyphicon glyphicon-trash"> </span></a>
+        	<a href="/admin/courts/edit/${court.id}"><span class="glyphicon glyphicon-pencil"> </span></a>
+        	<a href="/admin/courts/delete/${court.id}"><span class="glyphicon glyphicon-trash"> </span></a>
         </td>
       </tr>
 </c:forEach>

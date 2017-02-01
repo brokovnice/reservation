@@ -30,6 +30,17 @@ public class ReservationService {
 		return reservations;
 	}
 	
+	public List<Reservation> findAllPerCourt(int courtId){
+		List<Reservation> reservations = new ArrayList<>();
+		for(Reservation reservation : reservationRepository.findAll()){
+			if (reservation.getCourt().getId() == courtId){
+				reservations.add(reservation);
+			}
+		}
+		return reservations;
+	}
+	
+	
 	public List<Reservation> findAll(Date dateStart, Date dateEnd, int courtId){
 		List<Reservation> wantedReservations = new ArrayList<>();
 		for (Reservation reservation : reservationRepository.findAll()) {

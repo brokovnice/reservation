@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import finalppro.dao.UserRepository;
 import finalppro.model.Address;
 import finalppro.model.Court;
+import finalppro.model.CourtEditForm;
 import finalppro.model.Event;
 import finalppro.model.Reservation;
 import finalppro.model.Role;
@@ -88,6 +89,7 @@ public class AdminController {
 		}
 	}
 	
+	//Hraci
 	@GetMapping("/admin/users")
 	public String users(HttpServletRequest request, ModelMap map){
 		if (checkLogin(request)){
@@ -113,7 +115,7 @@ public class AdminController {
 	}
 	
 	@PostMapping(value="/admin/users/create")	
-	public String userCreateSubmitted(HttpServletRequest request, @ModelAttribute UserEditForm userEditForm, ModelMap map){
+	public String userCreateSubmitted(HttpServletRequest request, @ModelAttribute UserEditForm userEditForm){
 		if (checkLogin(request)){
 			//Configuration configuration = new Configuration().configure();
 			//SessionFactory sessionFactory = configuration.buildSessionFactory();
@@ -154,7 +156,7 @@ public class AdminController {
 			//session.close();
 			
 			//userService.save(user);
-			map.addAttribute("message", "Uživatel úspěšně editován!");
+			//map.addAttribute("message", "Uživatel úspěšně vytvořen!");
 			return "redirect:/admin/users";
 		} else {
 			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
@@ -185,7 +187,7 @@ public class AdminController {
 	}
 	
 	@PostMapping("/admin/users/edit/{id}")
-	public String userEditSubmitted(HttpServletRequest request, @PathVariable ("id") int id, @ModelAttribute UserEditForm userEditForm, ModelMap map){
+	public String userEditSubmitted(HttpServletRequest request, @PathVariable ("id") int id, @ModelAttribute UserEditForm userEditForm){
 		if (checkLogin(request)){
 			User oldUser = userService.findUser(id);
 			Address address = oldUser.getAddress();	
@@ -207,7 +209,7 @@ public class AdminController {
 			
 			userService.save(oldUser);
 			
-			map.addAttribute("message", "Uživatel úspěšně editován!");
+			//map.addAttribute("message", "Uživatel úspěšně editován!");
 			return "redirect:/admin/users";
 		} else {
 			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
@@ -215,12 +217,114 @@ public class AdminController {
 		}
 	}
 	
-	@PostMapping(value="/admin/users/delete/{id}")	
-	public String deleteEdit(HttpServletRequest request,  @PathVariable ("id") int id, ModelMap map){
+	@GetMapping(value="/admin/users/delete/{id}")	
+	public String userDelete(HttpServletRequest request,  @PathVariable ("id") int id){
 		if (checkLogin(request)){
 			userService.delete(id);
-			map.addAttribute("message", "Uživatel úspěšně editován!");
+			//map.addAttribute("message", "Uživatel úspěšně smazán!");
 			return "redirect:/admin/users";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}
+	
+	
+	
+	//kurty
+	@GetMapping("/admin/courts")
+	public String courts(HttpServletRequest request, ModelMap map){
+		if (checkLogin(request)){
+			map.addAttribute("courts", courtService.findAll());
+			return "/admin/courts/index";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}
+	
+	@GetMapping(value="/admin/courts/create")	
+	public String courtCreate(HttpServletRequest request, ModelMap map){
+		if (checkLogin(request)){			
+			map.addAttribute("title", "Vytvoření nového kurtu");
+			map.addAttribute("action", "/admin/courts/create");
+			return "/admin/courts/edit";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}
+	
+	@PostMapping(value="/admin/courts/create")	
+	public String courtCreateSubmitted(HttpServletRequest request, @ModelAttribute CourtEditForm courtEditForm){
+		if (checkLogin(request)){			
+			Court court = new Court();
+			Address address = new Address();
+			
+			address.setStreet(courtEditForm.getStreet());
+			address.setCity(courtEditForm.getCity());
+			address.setPostal_code(courtEditForm.getPostal_code());
+			addressService.save(address);
+			
+			court.setAddress(address);
+			
+			court.setName(courtEditForm.getName());
+			court.setActive(courtEditForm.isActive());
+			
+			courtService.save(court);
+			
+			//map.addAttribute("message", "Kurt úspěšně vytvořen!");
+			return "redirect:/admin/courts";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}	
+	
+	@GetMapping(value="/admin/courts/edit/{id}")	
+	public String courtsEdit(HttpServletRequest request, ModelMap map , @PathVariable ("id") int id){
+		if (checkLogin(request)){
+			map.addAttribute("court", courtService.findCourt(id));
+			map.addAttribute("title", "Editace kurtu");
+			map.addAttribute("action", "/admin/courts/edit");
+			
+			return "/admin/courts/edit";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}
+	
+	@PostMapping("/admin/courts/edit/{id}")
+	public String courtEditSubmitted(HttpServletRequest request, @PathVariable ("id") int id, @ModelAttribute CourtEditForm courtEditForm){
+		if (checkLogin(request)){
+			System.out.println("saeae");
+			Court court = courtService.findCourt(id);
+			Address address = court.getAddress();
+			
+			address.setStreet(courtEditForm.getStreet());
+			address.setCity(courtEditForm.getCity());
+			address.setPostal_code(courtEditForm.getPostal_code());
+			addressService.save(address);
+
+			court.setActive(courtEditForm.isActive());
+			court.setName(courtEditForm.getName());
+			courtService.save(court);
+			
+			//map.addAttribute("message", "Kurt úspěšně editován!");
+			return "redirect:/admin/courts";
+		} else {
+			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
+			return "/admin/login";
+		}
+	}
+	
+	@GetMapping(value="/admin/courts/delete/{id}")	
+	public String courtDelete(HttpServletRequest request,  @PathVariable ("id") int id){
+		if (checkLogin(request)){
+			courtService.delete(id);
+			//map.addAttribute("message", "Kurt úspěšně smazán!");
+			return "redirect:/admin/courts";
 		} else {
 			request.setAttribute("message", "Nemáte oprávnění pro prohlížení administrace");
 			return "/admin/login";
